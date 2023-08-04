@@ -6,12 +6,14 @@ const tokens = (n) => { //Utility function to ^18 random number
 }
 
 describe('Token', () => {
-    let token;
+    let token, accounts, deployer;
 
     beforeEach(async () => {
         //Fetch Token from Blockchain
         const Token = await ethers.getContractFactory('Token') //This variable is the undeployed contract
         token = await Token.deploy('Dapp University', 'DAPP', '1000000') //Here we deploy it and assign to a variable. Deploy runs the constructor, so we can pass args to constructor here. 
+        accounts = await ethers.getSigners()
+        deployer = accounts[0]
     })
 
     describe('Deployment', () => {
@@ -31,6 +33,9 @@ describe('Token', () => {
         })
         it('has correct total supply', async () => {
             expect(await token.totalSupply()).to.equal(totalSupply)
+        })
+        it('assigns total supply to deployer', async () => {
+            expect(await token.balanceOf(deployer.address)).to.equal(totalSupply)
         })
     })
 })
