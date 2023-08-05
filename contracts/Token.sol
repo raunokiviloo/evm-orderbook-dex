@@ -12,6 +12,8 @@ contract Token{
     //Track balances
     mapping(address => uint256) public balanceOf;
 
+    event Transfer(address indexed from, address indexed to, uint256 value); //How to define event. Use capital letter.
+
     //Send tokens
 
     constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
@@ -19,6 +21,21 @@ contract Token{
         symbol = _symbol;
         totalSupply = _totalSupply * (10**decimals);
         balanceOf[msg.sender] = totalSupply; //This is how we access data in a mapping
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool success)
+    {
+        //Require that sender has enough tokens to spend
+        require(_value <= balanceOf[msg.sender]);
+        require(_to != address(0));
+        //Deduct tokens from spender
+        balanceOf[msg.sender] -= _value;
+        //Credit tokens to receiver
+        balanceOf[_to] += _value;
+        
+        //Emit event
+        emit Transfer(msg.sender, _to, _value);
+        return true;
     }
 }
 //Good  practice in development to save files with a newline at the end.
